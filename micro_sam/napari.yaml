@@ -20,6 +20,9 @@ contributions:
     - id: micro-sam.sample_data_tracking
       python_name: micro_sam.sample_data:sample_data_tracking
       title: Load tracking sample data from micro-sam plugin
+    - id: micro-sam.annotator_2d_widget
+      python_name: micro_sam.sam_annotator.annotator_2d:annotator_2d_widget
+      title: 2D Annotator
   sample_data:
     - command: micro-sam.sample_data_image_series
       display_name: image series
@@ -39,3 +42,7 @@ contributions:
     - command: micro-sam.sample_data_tracking
       display_name: Tracking sample dataset
       key: micro-sam-tracking
+  widgets:
+    - command: micro-sam.annotator_2d_widget
+      autogenerate: true
+      display_name: 2D Annotator

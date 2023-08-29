@@ -2,6 +2,7 @@
 Helper functions for downloading Segment Anything models and predicting image embeddings.
 """
 
+from enum import Enum
 import hashlib
 import os
 import warnings
@@ -54,6 +55,7 @@ _DOWNLOAD_NAMES = {
     "vit_h_em": "vit_h_em.pth",
     "vit_b_em": "vit_b_em.pth",
 }
+AVAILABLE_MODELS = Enum('AvailableModels', _MODEL_URLS)
 
 
 # TODO define the proper type for image embeddings

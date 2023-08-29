@@ -1,5 +1,8 @@
+from enum import Enum
+import os
+from pathlib import Path
+from typing import TYPE_CHECKING, Optional, Tuple, Union
 import warnings
-from typing import Optional, Tuple
 
 import napari
 import numpy as np
@@ -7,6 +10,12 @@ import numpy as np
 from magicgui import magicgui
 from napari import Viewer
 from segment_anything import SamPredictor
+
+if TYPE_CHECKING:
+    # your plugin doesn't need to import napari at all just to use these types
+    # just put these imports here and wrap the hints in quotes
+    import napari.types
+    import napari.viewer
 
 from .. import util
 from .. import instance_segmentation
@@ -192,12 +201,45 @@ def _update_viewer(v, raw, show_embeddings, segmentation_result):
     v.layers["current_object"].data = np.zeros(shape, dtype="uint32")
 
 
-def annotator_2d(
-    raw: np.ndarray,
-    embedding_path: Optional[str] = None,
+def annotator_2d_widget(
+    img_layer: "napari.types.ImageData",
+    embedding_path: Union[str, os.PathLike] = Path.home(),
     show_embeddings: bool = False,
-    segmentation_result: Optional[np.ndarray] = None,
-    model_type: str = "vit_h",
+    segmentation_result: Optional["napari.types.LabelsData"] = None,
+    model_type: util.AVAILABLE_MODELS = util.AVAILABLE_MODELS.vit_h,
+    tile_shape: Tuple[Union[int, None], Union[int, None]] = (None, None),
+    halo: Tuple[Union[int, None], Union[int, None]] = (None, None),
+):
+    """@private"""
+    # Convert inputs to types required by the current function implmentation
+    raw = img_layer.data
+    if segmentation_result is not None:
+        assert segmentation_result.data.shape == img_layer.data.shape
+        segmentation_result = segmentation_result.data
+    if not all(tile_shape):
+        tile_shape = None
+    if not all(halo):
+        halo = None
+    # Start 2D annotation
+    annotator_2d(
+        raw,
+        embedding_path = str(embedding_path),
+        show_embeddings = show_embeddings,
+        segmentation_result = segmentation_result,
+        model_type = model_type.name,
+        tile_shape = tile_shape,
+        halo = halo,
+    )
+
+
+def annotator_2d(
+    raw: Union[np.ndarray, napari.layers.Image],
+    embedding_path: Optional[os.PathLike] = None,
+    show_embeddings: bool = False,
+    segmentation_result: Optional[Union[np.ndarray, napari.layers.Labels]] = None,
+    model_type: util.AVAILABLE_MODELS = util.AVAILABLE_MODELS.vit_h,
+#     tile_shape: Tuple[Union[int, None], Union[int, None]] = (None, None),
+#     halo: Tuple[Union[int, None], Union[int, None]] = (None, None),
     tile_shape: Optional[Tuple[int, int]] = None,
     halo: Optional[Tuple[int, int]] = None,
     return_viewer: bool = False,
@@ -233,6 +275,14 @@ def annotator_2d(
     global PREDICTOR, IMAGE_EMBEDDINGS, AMG
     AMG = None
 
+
+
+    if isinstance(raw, napari.layers.Image):
+        raw.name = "raw"
+        raw = raw.data
+    if isinstance(model_type, Enum):
+        model_type = model_type.name
+
     if predictor is None:
         PREDICTOR = util.get_sam_model(model_type=model_type)
     else:
@@ -249,9 +299,11 @@ def annotator_2d(
 
     # viewer is freshly initialized
     if v is None:
+        print("Initialize new napari viewer")
         v = _initialize_viewer(raw, segmentation_result, tile_shape, show_embeddings)
     # we use an existing viewer and just update all the layers
     else:
+        print("Update existing napari viewer")
         _update_viewer(v, raw, show_embeddings, segmentation_result)
 
     #
