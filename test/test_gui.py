@@ -13,12 +13,14 @@ def test_open_annotator_2d(make_napari_viewer_proxy, tmp_path):
     model_type = "vit_t"  # tiny model
     embedding_path = tmp_path / "test-embedding.zarr"
     # example data - a basic checkerboard pattern
-    image = np.zeros((16,16))
-    image[:8,:8] = 1
-    image[8:,8:] = 1
+    image = np.zeros((16, 16))
+    image[:8, :8] = 1
+    image[8:, 8:] = 1
 
     viewer = make_napari_viewer_proxy()
-    viewer = _initialize_viewer(image, None, None, None)  # TODO: fix hacky workaround
+    viewer = _initialize_viewer(
+        image, None, None, None
+    )  # TODO: fix hacky workaround
     # test generating image embedding, then adding micro-sam dock widgets to the GUI
     viewer = annotator_2d(
         image,
@@ -26,10 +28,17 @@ def test_open_annotator_2d(make_napari_viewer_proxy, tmp_path):
         show_embeddings=False,
         model_type=model_type,
         v=viewer,
-        return_viewer=True
+        return_viewer=True,
     )
     assert len(viewer.layers) == 6
-    expected_layer_names = ['raw', 'auto_segmentation', 'committed_objects', 'current_object', 'point_prompts', 'prompts']
+    expected_layer_names = [
+        "raw",
+        "auto_segmentation",
+        "committed_objects",
+        "current_object",
+        "point_prompts",
+        "prompts",
+    ]
     for layername in expected_layer_names:
         assert layername in viewer.layers
     # The annotator 2d dock widgets are now open in the napari viewer.
