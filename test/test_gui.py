@@ -18,10 +18,8 @@ def test_open_annotator_2d(make_napari_viewer_proxy, tmp_path):
     image[8:, 8:] = 1
 
     viewer = make_napari_viewer_proxy()
-    viewer = _initialize_viewer(
-        image, None, None, None
-    )  # TODO: fix hacky workaround
-    # test generating image embedding, then adding micro-sam dock widgets to the GUI
+    viewer = _initialize_viewer(image, None, None, None)
+    # Test generating image embedding then add micro-sam dock widgets to the GUI
     viewer = annotator_2d(
         image,
         embedding_path,
