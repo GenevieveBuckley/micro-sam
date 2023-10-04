@@ -40,7 +40,7 @@ jobs:
         shell: bash -l {0}
         run: mamba install pytest pytest-cov --yes
 
-      - name: Install package
+      - name: Install micro-sam package
         shell: bash -l {0}
         run: pip install --no-deps -e .
 
