@@ -6,7 +6,7 @@ import tempfile
 import imageio.v3 as imageio
 import pytest
 from skimage.data import binary_blobs
-import torch.backends
+import torch
 
 import micro_sam.util as util
 from micro_sam.sam_annotator import image_series_annotator, image_folder_annotator
@@ -57,7 +57,7 @@ def test_image_series_annotator(make_napari_viewer_proxy):
     # Clear pytorch cache
     if torch.backends.mps.is_available():
         torch.mps.empty_cache()
-    elif torch.backends.cuda.is_available():
+    elif torch.cuda.is_available():
         torch.cuda.empty_cache()
 
 
@@ -94,5 +94,5 @@ def test_image_folder_annotator(make_napari_viewer_proxy):
     # Clear pytorch cache
     if torch.backends.mps.is_available():
         torch.mps.empty_cache()
-    elif torch.backends.cuda.is_available():
+    elif torch.cuda.is_available():
         torch.cuda.empty_cache()

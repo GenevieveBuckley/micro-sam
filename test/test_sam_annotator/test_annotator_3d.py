@@ -4,7 +4,7 @@ import platform
 import numpy as np
 import pytest
 from skimage.data import binary_blobs
-import torch.backends
+import torch
 
 import micro_sam.util as util
 from micro_sam._test_util import check_layer_initialization
@@ -43,5 +43,5 @@ def test_annotator_3d(make_napari_viewer_proxy):
     # Clear pytorch cache
     if torch.backends.mps.is_available():
         torch.mps.empty_cache()
-    elif torch.backends.cuda.is_available():
+    elif torch.cuda.is_available():
         torch.cuda.empty_cache()
