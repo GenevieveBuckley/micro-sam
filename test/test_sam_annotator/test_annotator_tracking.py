@@ -1,11 +1,14 @@
+import gc
 import platform
 
 import numpy as np
 import pytest
 from skimage.data import binary_blobs
+import torch
 
 import micro_sam.util as util
 from micro_sam.sam_annotator import annotator_tracking
+from micro_sam.sam_annotator._state import AnnotatorState
 from micro_sam._test_util import check_layer_initialization
 
 
@@ -29,3 +32,16 @@ def test_annotator_tracking(make_napari_viewer_proxy):
 
     check_layer_initialization(viewer, image.shape)
     viewer.close()  # must close the viewer at the end of tests
+
+    # Ensure proper garbage collection and prevent memory problems in our CI tests
+    del viewer
+    del image
+    state = AnnotatorState()
+    state.reset_state()
+    del state
+    gc.collect()
+    # Clear pytorch cache
+    if torch.backends.mps.is_available():
+        torch.mps.empty_cache()
+    elif torch.cuda.is_available():
+        torch.cuda.empty_cache()
