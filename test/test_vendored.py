@@ -29,11 +29,13 @@ class TestVendored(unittest.TestCase):
     @unittest.skipIf(not torch.cuda.is_available(),
                      "CUDA Pytorch backend is not available")
     def test_cuda_batched_mask_to_box(self):
+        torch.cuda.empty_cache()
         self._test_batched_mask_to_box(device="cuda")
 
     @unittest.skipIf(not (torch.backends.mps.is_available() and torch.backends.mps.is_built()),
                      "MPS Pytorch backend is not available")
     def test_mps_batched_mask_to_box(self):
+        torch.mps.empty_cache()
         self._test_batched_mask_to_box(device="mps")
 
     def _get_mask_to_rle_pytorch_data(self):
