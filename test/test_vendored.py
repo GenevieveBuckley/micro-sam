@@ -20,6 +20,10 @@ class TestVendored(unittest.TestCase):
         from micro_sam._vendored import batched_mask_to_box
 
         mask, expected_result = self._get_mask_to_box_data()
+        print("torch.mps.current_allocated_memory()":)
+        print(torch.mps.current_allocated_memory())
+        print("torch.mps.driver_allocated_memory():")
+        print(torch.mps.driver_allocated_memory())
         mask = torch.as_tensor(mask, dtype=torch.bool, device=device)
         expected_result = torch.as_tensor(expected_result, dtype=torch.int, device=device)
         result = batched_mask_to_box(mask)
