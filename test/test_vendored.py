@@ -34,13 +34,14 @@ class TestVendored(unittest.TestCase):
         torch.cuda.empty_cache()
         self._test_batched_mask_to_box(device="cuda")
 
-    @unittest.skipif((os.getenv("GITHUB_ACTIONS") == "true"),
-                     "Test fails on Github Actions macos-14 runner " + \
-                     "https://github.com/computational-cell-analytics/micro-sam/issues/380")
+    # @unittest.skipif((os.getenv("GITHUB_ACTIONS") == "true"),
+    #                  "Test fails on Github Actions macos-14 runner " + \
+    #                  "https://github.com/computational-cell-analytics/micro-sam/issues/380")
     @unittest.skipIf(not (torch.backends.mps.is_available() and torch.backends.mps.is_built()),
                      "MPS Pytorch backend is not available")
     def test_mps_batched_mask_to_box(self):
         torch.mps.empty_cache()
+        torch.mps.set_per_process_memory_fraction(1)
         self._test_batched_mask_to_box(device="mps")
 
     def _get_mask_to_rle_pytorch_data(self):
