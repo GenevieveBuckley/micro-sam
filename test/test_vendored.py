@@ -1,8 +1,8 @@
+import os
 import unittest
 
 import numpy as np
 import torch
-from unittest.mock import patch
 
 from segment_anything.utils.amg import mask_to_rle_pytorch as mask_to_rle_pytorch_sam
 from skimage.draw import random_shapes
@@ -16,11 +16,11 @@ class TestVendored(unittest.TestCase):
         return mask_numpy, expected_result
 
 
-    @patch.dict('os.environ', {'PYTORCH_MPS_HIGH_WATERMARK_RATIO': '0.0'})
     def _test_batched_mask_to_box(self, device):
         from micro_sam._vendored import batched_mask_to_box
         print("Torch current allocated memory:")
         print(torch.mps.current_allocated_memory())
+        os.environ['PYTORCH_MPS_HIGH_WATERMARK_RATIO'] = '0.0'
         mask, expected_result = self._get_mask_to_box_data()
         print("Torch current allocated memory:")
         print(torch.mps.current_allocated_memory())
@@ -28,6 +28,7 @@ class TestVendored(unittest.TestCase):
         expected_result = torch.as_tensor(expected_result, dtype=torch.int, device=device)
         result = batched_mask_to_box(mask)
         assert all(result == expected_result)
+        os.environ.pop('PYTORCH_MPS_HIGH_WATERMARK_RATIO')
 
     def test_cpu_batched_mask_to_box(self):
         self._test_batched_mask_to_box(device="cpu")
