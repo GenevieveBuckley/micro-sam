@@ -45,7 +45,7 @@ class TestVendored(unittest.TestCase):
                      "MPS Pytorch backend is not available")
     def test_mps_batched_mask_to_box(self):
         torch.mps.empty_cache()
-        torch.mps.set_per_process_memory_fraction(1)
+        torch.mps.set_per_process_memory_fraction(1.0)
         self._test_batched_mask_to_box(device="mps")
 
     def _get_mask_to_rle_pytorch_data(self):
