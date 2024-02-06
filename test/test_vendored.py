@@ -24,6 +24,8 @@ class TestVendored(unittest.TestCase):
         print(torch.mps.current_allocated_memory())
         print("torch.mps.driver_allocated_memory():")
         print(torch.mps.driver_allocated_memory())
+        torch.mps.set_per_process_memory_fraction(2.0)
+        os.environ["PYTORCH_MPS_HIGH_WATERMARK_RATIO"] = "0.0"
         mask = torch.as_tensor(mask, dtype=torch.bool, device=device)
         expected_result = torch.as_tensor(expected_result, dtype=torch.int, device=device)
         result = batched_mask_to_box(mask)
@@ -45,7 +47,6 @@ class TestVendored(unittest.TestCase):
                      "MPS Pytorch backend is not available")
     def test_mps_batched_mask_to_box(self):
         torch.mps.empty_cache()
-        torch.mps.set_per_process_memory_fraction(2.0)
         self._test_batched_mask_to_box(device="mps")
 
     def _get_mask_to_rle_pytorch_data(self):
