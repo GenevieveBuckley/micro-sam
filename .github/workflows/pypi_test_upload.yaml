@@ -2,6 +2,11 @@ name: pypi_test_upload
 
 on:
   workflow_dispatch:
+  push:
+    # branches to consider in the event; optional, defaults to all
+    branches:
+      - pypi-deployment
+      - test-pypi-deployment
 
 permissions:
   contents: read
