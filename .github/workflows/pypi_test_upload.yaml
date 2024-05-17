@@ -4,10 +4,6 @@ on:
   workflow_dispatch:
   pull_request:
   push:
-    # branches to consider in the event; optional, defaults to all
-    branches:
-      - pypi-deployment
-      - test-pypi-deployment
 
 permissions:
   contents: read
